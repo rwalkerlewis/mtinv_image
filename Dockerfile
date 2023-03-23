@@ -47,7 +47,7 @@ from build-${BUILD_ENV} as build-deps
 # Create 'mtinv-user' user
 ENV MTINV_USER=mtinv-user
 
-ENV PREFIX_DIR=/opt/mtinv \
+ENV DEV_DIR=/opt/mtinv \
 	BUILD_DIR=/home/mtinv \
 	MTINV=mtinv3 \
 	HOME=/home/${MTINV_USER} \
@@ -55,21 +55,21 @@ ENV PREFIX_DIR=/opt/mtinv \
 
 # Create mtinv-user
 RUN useradd --create-home --shell /bin/bash $MTINV_USER
-RUN mkdir $PREFIX_DIR \
-  && chown $MTINV_USER $PREFIX_DIR \
-  && chgrp $MTINV_USER $PREFIX_DIR \
+RUN mkdir $DEV_DIR \
+  && chown $MTINV_USER $DEV_DIR \
+  && chgrp $MTINV_USER $DEV_DIR \
   && mkdir -p $BUILD_DIR/build \
   && chown -R $MTINV_USER $BUILD_DIR \
   && chgrp -R $MTINV_USER $BUILD_DIR
 
 # Build MTINV
 USER $MTINV_USER
-WORKDIR $BUILD_DIR
+WORKDIR $DEV_DIR
 RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
 			  && cd mtinv3 \
 			  && make all
 
-ENV PATH=${BUILD_DIR}/${MTINV}/bin:${PYLITHDEPS_DIR}/bin:${PATH}
+ENV PATH=${DEV_DIR}/${MTINV}/bin:${PATH}
 			  
 
 
@@ -79,5 +79,6 @@ ENV PATH=${BUILD_DIR}/${MTINV}/bin:${PYLITHDEPS_DIR}/bin:${PATH}
 
 #RUN rm -fr /var/lib/apt /var/lib/dpkg /var/lib/cache /var/lib/log
 
+WORKDIR $HOME
 
 CMD /bin/bash
