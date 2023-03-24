@@ -18,9 +18,12 @@ RUN apt-get update \
       vim-nox \
       gfortran \
       gcc \
+      libc6-dev \
+      libc6 \
       nano \
       git \
       gmt \
+      gmt-gshhg-full \
       csh \
       tcsh \
       sqlite \
@@ -66,8 +69,10 @@ RUN mkdir $DEV_DIR \
 USER $MTINV_USER
 WORKDIR $DEV_DIR
 RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
-			  && cd mtinv3 \
+			  && cd ${MTINV} \
 			  && make all
+WORKDIR ${DEV_DIR}/${MTINV}/src
+#RUN make all 
 
 ENV PATH=${DEV_DIR}/${MTINV}/bin:${PATH}
 			  

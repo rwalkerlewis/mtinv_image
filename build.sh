@@ -1,1 +1,1 @@
-docker build --rm -f Dockerfile -t mtinv .
+docker build --rm -f  Dockerfile -t mtinv .
