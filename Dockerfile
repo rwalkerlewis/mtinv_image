@@ -29,9 +29,12 @@ RUN apt-get update \
       sqlite \
       imagemagick \
       python3 \
+      sudo \
       default-jre \
+      default-jdk \
       libopenmpi-dev \
       openmpi-bin \
+      man \
       openmpi-common
 
 # ------------------------------------------------------------------------------
@@ -57,7 +60,7 @@ ENV DEV_DIR=/opt/mtinv \
 	PATH_ORIG=${PATH}
 
 # Create mtinv-user
-RUN useradd --create-home --shell /bin/bash $MTINV_USER
+RUN useradd -m --create-home --shell /bin/bash $MTINV_USER && echo "${MTINV_USER}:mtinv" | chpasswd && adduser ${MTINV_USER} sudo
 RUN mkdir $DEV_DIR \
   && chown $MTINV_USER $DEV_DIR \
   && chgrp $MTINV_USER $DEV_DIR \
@@ -75,7 +78,7 @@ WORKDIR ${DEV_DIR}/${MTINV}/src
 #RUN make all 
 
 ENV PATH=${DEV_DIR}/${MTINV}/bin:${PATH}
-			  
+ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man			  
 
 
 # Setup user and environment
