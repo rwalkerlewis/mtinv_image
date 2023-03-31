@@ -1,5 +1,5 @@
 ARG BUILD_ENV=nocerts
-FROM ubuntu:16.04 as os-update
+FROM ubuntu:14.04 as os-update
 MAINTAINER Robert Walker <langleyreview@gmail.com>
 
 ENV BUILD_ENV=${BUILD_ENV}
@@ -23,7 +23,6 @@ RUN apt-get update \
       nano \
       git \
       gmt \
-      gmt-gshhg-full \
       csh \
       tcsh \
       sqlite \
@@ -31,6 +30,7 @@ RUN apt-get update \
       python3 \
       sudo \
       default-jre \
+      gmt-gshhs-full \
       default-jdk \
       libopenmpi-dev \
       openmpi-bin \
@@ -79,6 +79,7 @@ WORKDIR ${DEV_DIR}/${MTINV}/src
 
 ENV PATH=${DEV_DIR}/${MTINV}/bin:${PATH}
 ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man			  
+ENV PATH=PATH=${PATH}:/usr/lib/gmt/bin
 
 
 # Setup user and environment
