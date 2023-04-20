@@ -1,5 +1,5 @@
 ARG BUILD_ENV=nocerts
-FROM ubuntu:14.04 as os-update
+FROM ubuntu:16.04 as os-update
 MAINTAINER Robert Walker <langleyreview@gmail.com>
 
 ENV BUILD_ENV=${BUILD_ENV}
@@ -11,6 +11,7 @@ RUN apt-get update \
       file \
       libtool \
       curl \
+      wget \
       gdb \
       valgrind \
       vim-common \
@@ -35,9 +36,13 @@ RUN apt-get update \
       libopenmpi-dev \
       openmpi-bin \
       man \
+      libncurses-dev \
+      tar \
+      gzip \
       openmpi-common
 
-# ------------------------------------------------------------------------------
+# # --------------------------------------------------------------------------- 80
+
 from os-update as build-certs-doi
 
 ONBUILD COPY docker/certs/ /usr/local/share/ca-certificates
@@ -47,7 +52,7 @@ ONBUILD ENV CERT_PATH=/etc/ssl/certs CERT_FILE=DOIRootCA2.pem
 from os-update as build-nocerts
 ONBUILD ENV CERT_PATH=no  CERT_FILE=no
 
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------- 80
 from build-${BUILD_ENV} as build-deps
 
 # Create 'mtinv-user' user
@@ -68,11 +73,13 @@ RUN mkdir $DEV_DIR \
   && chown -R $MTINV_USER $BUILD_DIR \
   && chgrp -R $MTINV_USER $BUILD_DIR
 
+# --------------------------------------------------------------------------- 80
 # Build MTINV
 USER $MTINV_USER
 WORKDIR $DEV_DIR
 RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
-			  && cd ${MTINV} \
+        && cd ${MTINV} \
+        && git checkout local_updates \        
 			  && make all
 WORKDIR ${DEV_DIR}/${MTINV}/src
 #RUN make all 
@@ -81,6 +88,16 @@ ENV PATH=${DEV_DIR}/${MTINV}/bin:${PATH}
 ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man			  
 ENV PATH=PATH=${PATH}:/usr/lib/gmt/bin
 
+# --------------------------------------------------------------------------- 80
+# Build CPS
+USER ${MTINV_USER}
+WORKDIR ${DEV_DIR}
+RUN wget --no-check-certificate http://www.eas.slu.edu/eqc/eqc_cps/Download/NP330.Nov-08-2022.tgz \
+        && gunzip -c NP330.Nov-08-2022.tgz | tar xf - \
+        && cd PROGRAMS.330 \
+        && ./Setup LINUX6440 \
+        && ./C
+ENV PATH=${DEV_DIR}/PROGRAMS.330/bin:${PATH}
 
 # Setup user and environment
 #WORKDIR /home/$MTINV_USER
