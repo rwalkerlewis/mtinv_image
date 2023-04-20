@@ -76,17 +76,13 @@ RUN mkdir $DEV_DIR \
 # --------------------------------------------------------------------------- 80
 # Build MTINV
 USER $MTINV_USER
-WORKDIR $DEV_DIR
+WORKDIR ${DEV_DIR}
 RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
         && cd ${MTINV} \
         && git checkout local_updates \        
 			  && make all
 WORKDIR ${DEV_DIR}/${MTINV}/src
 #RUN make all 
-
-ENV PATH=${DEV_DIR}/${MTINV}/bin:${PATH}
-ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man			  
-ENV PATH=PATH=${PATH}:/usr/lib/gmt/bin
 
 # --------------------------------------------------------------------------- 80
 # Build CPS
@@ -97,8 +93,9 @@ RUN wget --no-check-certificate http://www.eas.slu.edu/eqc/eqc_cps/Download/NP33
         && cd PROGRAMS.330 \
         && ./Setup LINUX6440 \
         && ./C
-ENV PATH=${DEV_DIR}/PROGRAMS.330/bin:${PATH}
-
+# Set PATH
+ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${PATH}
+ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man			  
 # Setup user and environment
 #WORKDIR /home/$MTINV_USER
 
