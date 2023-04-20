@@ -93,9 +93,10 @@ RUN wget --no-check-certificate http://www.eas.slu.edu/eqc/eqc_cps/Download/NP33
         && cd PROGRAMS.330 \
         && ./Setup LINUX6440 \
         && ./C
-# Set PATH
+# Set PATH and over vars
 ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${PATH}
-ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man			  
+ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man
+ENV MTINV_PATH=${DEV_DIR}/${MTINV}
 # Setup user and environment
 #WORKDIR /home/$MTINV_USER
 
