@@ -43,29 +43,36 @@ RUN apt-get update \
 
 # # --------------------------------------------------------------------------- 80
 
-from os-update as build-certs-doi
+FROM os-update as build-certs-doi
 
 ONBUILD COPY docker/certs/ /usr/local/share/ca-certificates
 ONBUILD RUN update-ca-certificates
 ONBUILD ENV CERT_PATH=/etc/ssl/certs CERT_FILE=DOIRootCA2.pem
 
-from os-update as build-nocerts
+FROM os-update as build-nocerts
 ONBUILD ENV CERT_PATH=no  CERT_FILE=no
 
 # --------------------------------------------------------------------------- 80
-from build-${BUILD_ENV} as build-deps
-
+FROM build-${BUILD_ENV} as build-deps
+ARG user=dockimble
+ARG uid
+ARG gid
 # Create 'mtinv-user' user
-ENV MTINV_USER=mtinv-user
-
+ENV MTINV_USER=${user}
+ENV MTINV_DIR=mtinv-user
 ENV DEV_DIR=/opt/mtinv \
 	BUILD_DIR=/home/mtinv \
 	MTINV=mtinv3 \
-	HOME=/home/${MTINV_USER} \
+	HOME=/home/${MTINV_DIR} \
 	PATH_ORIG=${PATH}
 
 # Create mtinv-user
-RUN useradd -m --create-home --shell /bin/bash $MTINV_USER && echo "${MTINV_USER}:mtinv" | chpasswd && adduser ${MTINV_USER} sudo
+RUN useradd -m $MTINV_USER \
+  && echo "${MTINV_USER}:${MTINV_USER}" | chpasswd \
+  && adduser ${MTINV_USER} sudo \
+  && usermod --shell /bin/bash ${MTINV_USER} \
+  && usermod --uid ${uid} ${MTINV_USER} \
+  && groupmod --gid ${gid} ${MTINV_USER}
 RUN mkdir $DEV_DIR \
   && chown $MTINV_USER $DEV_DIR \
   && chgrp $MTINV_USER $DEV_DIR \
