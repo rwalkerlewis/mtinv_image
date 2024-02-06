@@ -39,7 +39,11 @@ RUN apt-get update \
       libncurses-dev \
       tar \
       gzip \
-      openmpi-common
+      openmpi-common \
+      libreadline-dev \
+      libxml2-dev \
+      libcurl3-openssl-dev \
+      zlib1g-dev
 
 # # --------------------------------------------------------------------------- 80
 
@@ -54,17 +58,25 @@ ONBUILD ENV CERT_PATH=no  CERT_FILE=no
 
 # --------------------------------------------------------------------------- 80
 FROM build-${BUILD_ENV} as build-deps
-ARG user=dockimble
+ARG user=mtinv_user
 ARG uid
 ARG gid
 # Create 'mtinv-user' user
 ENV MTINV_USER=${user}
 ENV MTINV_DIR=mtinv-user
-ENV DEV_DIR=/opt/mtinv \
-	BUILD_DIR=/home/mtinv \
-	MTINV=mtinv3 \
-	HOME=/home/${MTINV_DIR} \
-	PATH_ORIG=${PATH}
+ENV DEV_DIR=/opt/mtinv 
+ENV BUILD_DIR=/home/mtinv 
+ENV	MTINV=mtinv3
+ENV FK=fk
+ENV SAC="sac-102.0"
+ENV HOME=/home/${MTINV_DIR}
+ENV PATH_ORIG=${PATH}
+ENV SACHOME=${DEV_DIR}/${SAC}/sac
+ENV SACAUX=${SACHOME}/aux
+ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${SACHOME}/bin:${DEV_DIR}/${FK}:${PATH}
+ENV LD_LIBRARY_PATH=${DEV_DIR}/${SAC}/src:${LD_LIBRARY_PATH}
+ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man
+ENV MTINV_PATH=${DEV_DIR}/${MTINV} 
 
 # Create mtinv-user
 RUN useradd -m $MTINV_USER \
@@ -86,7 +98,7 @@ USER $MTINV_USER
 WORKDIR ${DEV_DIR}
 RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
         && cd ${MTINV} \
-        && git checkout local_updates \        
+        # && git checkout local_updates \        
 			  && make all
 WORKDIR ${DEV_DIR}/${MTINV}/src
 #RUN make all 
@@ -95,15 +107,40 @@ WORKDIR ${DEV_DIR}/${MTINV}/src
 # Build CPS
 USER ${MTINV_USER}
 WORKDIR ${DEV_DIR}
-RUN wget --no-check-certificate http://www.eas.slu.edu/eqc/eqc_cps/Download/NP330.Nov-08-2022.tgz \
-        && gunzip -c NP330.Nov-08-2022.tgz | tar xf - \
+# RUN wget --no-check-certificate https://www.eas.slu.edu/eqc/eqc_cps/Download/NP330.Oct-26-2023.tgz \
+#         && gunzip -c NP330.Oct-26-2023.tgz | tar xf - \
+#         && cd PROGRAMS.330 \
+#         && ./Setup LINUX6440 \
+#         && ./C
+COPY ./NP330.Oct-26-2023.tgz ${DEV_DIR}
+RUN gunzip -c NP330.Oct-26-2023.tgz | tar xf - \
         && cd PROGRAMS.330 \
         && ./Setup LINUX6440 \
         && ./C
+
+# --------------------------------------------------------------------------- 80
+# Build SAC
+USER ${MTINV_USER}
+WORKDIR ${DEV_DIR}
+COPY ./sac-102.0.tar.gz ${DEV_DIR}
+RUN gunzip -c sac-102.0.tar.gz | tar xf - \
+        && cd sac-102.0 \
+        && ./configure --enable-readline --prefix=${SACHOME} \
+        && make \
+        && make install
+
+
+# # --------------------------------------------------------------------------- 80
+# Build FK
+# USER ${MTINV_USER}
+# WORKDIR ${DEV_DIR}
+# RUN git clone https://github.com/rwalkerlewis/fk ${FK} \
+#         && cd ${FK} \
+#         && make
+
+
 # Set PATH and over vars
-ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${PATH}
-ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man
-ENV MTINV_PATH=${DEV_DIR}/${MTINV}
+
 # Setup user and environment
 #WORKDIR /home/$MTINV_USER
 
