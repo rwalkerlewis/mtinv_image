@@ -66,17 +66,14 @@ ENV MTINV_USER=${user}
 ENV MTINV_DIR=mtinv-user
 ENV DEV_DIR=/opt/mtinv 
 ENV BUILD_DIR=/home/mtinv 
-ENV	MTINV=mtinv3
+ENV	MTINV=mtinv4
 ENV FK=fk
 ENV SAC="sac-102.0"
 ENV HOME=/home/${MTINV_DIR}
 ENV PATH_ORIG=${PATH}
 ENV SACHOME=${DEV_DIR}/${SAC}/sac
 ENV SACAUX=${SACHOME}/aux
-ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${SACHOME}/bin:${DEV_DIR}/${FK}:${PATH}
-ENV LD_LIBRARY_PATH=${DEV_DIR}/${SAC}/src:${LD_LIBRARY_PATH}
-ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man
-ENV MTINV_PATH=${DEV_DIR}/${MTINV} 
+
 
 # Create mtinv-user
 RUN useradd -m $MTINV_USER \
@@ -101,7 +98,12 @@ RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
         # && git checkout local_updates \        
 			  && make all
 WORKDIR ${DEV_DIR}/${MTINV}/src
-#RUN make all 
+RUN make all 
+
+ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${SACHOME}/bin:${DEV_DIR}/${FK}:${PATH}
+ENV LD_LIBRARY_PATH=${DEV_DIR}/${SAC}/src:${LD_LIBRARY_PATH}
+ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man
+ENV MTINV_PATH=${DEV_DIR}/${MTINV} 
 
 # --------------------------------------------------------------------------- 80
 # Build CPS
