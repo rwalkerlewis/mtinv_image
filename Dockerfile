@@ -100,7 +100,7 @@ RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
 WORKDIR ${DEV_DIR}/${MTINV}/src
 RUN make all 
 
-ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${SACHOME}/bin:${DEV_DIR}/${FK}:${PATH}
+ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${SACHOME}/bin:${DEV_DIR}/${FK}/bin:${PATH}
 ENV LD_LIBRARY_PATH=${DEV_DIR}/${SAC}/src:${LD_LIBRARY_PATH}
 ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man
 ENV MTINV_PATH=${DEV_DIR}/${MTINV} 
@@ -132,13 +132,13 @@ RUN gunzip -c sac-102.0.tar.gz | tar xf - \
         && make install
 
 
-# # --------------------------------------------------------------------------- 80
+# --------------------------------------------------------------------------- 80
 # Build FK
-# USER ${MTINV_USER}
-# WORKDIR ${DEV_DIR}
-# RUN git clone https://github.com/rwalkerlewis/fk ${FK} \
-#         && cd ${FK} \
-#         && make
+USER ${MTINV_USER}
+WORKDIR ${DEV_DIR}
+RUN git clone https://github.com/rwalkerlewis/fk ${FK} \
+        && cd ${FK} \
+        && make all
 
 
 # Set PATH and over vars
