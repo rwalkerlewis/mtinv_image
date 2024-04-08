@@ -66,8 +66,9 @@ ENV MTINV_USER=${user}
 ENV MTINV_DIR=mtinv-user
 ENV DEV_DIR=/opt/mtinv 
 ENV BUILD_DIR=/home/mtinv 
-ENV	MTINV=mtinv4
+ENV MTINV=mtinv4
 ENV FK=fk
+ENV CPS=cps
 ENV SAC="sac-102.0"
 ENV HOME=/home/${MTINV_DIR}
 ENV PATH_ORIG=${PATH}
@@ -100,7 +101,7 @@ RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
 WORKDIR ${DEV_DIR}/${MTINV}/src
 RUN make all 
 
-ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${SACHOME}/bin:${DEV_DIR}/${FK}/bin:${PATH}
+ENV PATH=${DEV_DIR}/${MTINV}/bin:${DEV_DIR}/${CPS}/PROGRAMS.330/bin:/usr/lib/gmt/bin:${SACHOME}/bin:${DEV_DIR}/${FK}/bin:${PATH}
 ENV LD_LIBRARY_PATH=${DEV_DIR}/${SAC}/src:${LD_LIBRARY_PATH}
 ENV MANPATH=${MANPATH}:${DEV_DIR}/${MTINV}/man
 ENV MTINV_PATH=${DEV_DIR}/${MTINV} 
@@ -114,8 +115,13 @@ WORKDIR ${DEV_DIR}
 #         && cd PROGRAMS.330 \
 #         && ./Setup LINUX6440 \
 #         && ./C
-COPY ./NP330.Oct-26-2023.tgz ${DEV_DIR}
-RUN gunzip -c NP330.Oct-26-2023.tgz | tar xf - \
+# COPY ./NP330.Oct-26-2023.tgz ${DEV_DIR}
+# RUN gunzip -c NP330.Oct-26-2023.tgz | tar xf - \
+#         && cd PROGRAMS.330 \
+#         && ./Setup LINUX6440 \
+#         && ./C
+RUN git clone https://github.com/rwalkerlewis/cps_src ${CPS} \
+        && cd ${CPS} \
         && cd PROGRAMS.330 \
         && ./Setup LINUX6440 \
         && ./C
