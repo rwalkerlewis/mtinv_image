@@ -93,7 +93,7 @@ RUN mkdir $DEV_DIR \
 # Build MTINV
 USER $MTINV_USER
 WORKDIR ${DEV_DIR}
-RUN git clone https://github.com/rwalkerlewis/mtinv ${MTINV} \
+RUN git clone https://github.com/llnl/mtinv ${MTINV} \
         && cd ${MTINV} \
         # && git checkout local_updates \        
 			  && make all
@@ -138,7 +138,8 @@ USER ${MTINV_USER}
 WORKDIR ${DEV_DIR}
 RUN git clone https://github.com/rwalkerlewis/fk ${FK} \
         && cd ${FK} \
-        && make all
+        && make all \
+        && cp -f fk.pl ./bin/
 
 
 # Set PATH and over vars
