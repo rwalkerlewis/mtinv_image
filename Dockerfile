@@ -1,6 +1,6 @@
 ARG BUILD_ENV=nocerts
 FROM ubuntu:16.04 as os-update
-MAINTAINER Robert Walker <langleyreview@gmail.com>
+LABEL Robert Walker <langleyreview@gmail.com>
 
 ENV BUILD_ENV=${BUILD_ENV}
 
@@ -59,14 +59,14 @@ ONBUILD ENV CERT_PATH=no  CERT_FILE=no
 # --------------------------------------------------------------------------- 80
 FROM build-${BUILD_ENV} as build-deps
 ARG user=mtinv_user
-ARG uid
-ARG gid
+ARG uid=1000
+ARG gid=1000
 # Create 'mtinv-user' user
 ENV MTINV_USER=${user}
 ENV MTINV_DIR=mtinv-user
 ENV DEV_DIR=/opt/mtinv 
 ENV BUILD_DIR=/home/mtinv 
-ENV	MTINV=mtinv4
+ENV MTINV=mtinv4
 ENV FK=fk
 ENV SAC="sac-102.0"
 ENV HOME=/home/${MTINV_DIR}
@@ -96,7 +96,7 @@ WORKDIR ${DEV_DIR}
 RUN git clone https://github.com/llnl/mtinv ${MTINV} \
         && cd ${MTINV} \
         # && git checkout local_updates \        
-			  && make all
+        && make all
 WORKDIR ${DEV_DIR}/${MTINV}/src
 RUN make all 
 
