@@ -24,6 +24,8 @@ RUN apt-get update \
       nano \
       git \
       gmt \
+      gmt-gshhg \
+      gawk \
       csh \
       tcsh \
       sqlite \
