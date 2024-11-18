@@ -1,6 +1,6 @@
 ARG BUILD_ENV=nocerts
 FROM ubuntu:16.04 as os-update
-LABEL Robert Walker <langleyreview@gmail.com>
+LABEL Robert Walker <rainbowseismic@gmail.com>
 
 ENV BUILD_ENV=${BUILD_ENV}
 
@@ -117,7 +117,7 @@ WORKDIR ${DEV_DIR}
 #         && ./Setup LINUX6440 \
 #         && ./C
 COPY ./NP330.Oct-26-2023.tgz ${DEV_DIR}
-RUN gunzip -c NP330.Oct-26-2023.tgz | tar xf - \
+RUN gunzip -c NP330.Oct-17-2024.tgz | tar xf - \
         && cd PROGRAMS.330 \
         && ./Setup LINUX6440 \
         && ./C
