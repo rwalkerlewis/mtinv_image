@@ -45,6 +45,7 @@ RUN apt-get update \
       libreadline-dev \
       libxml2-dev \
       libcurl3-openssl-dev \
+      x11-apps \
       zlib1g-dev
 
 # # --------------------------------------------------------------------------- 80
