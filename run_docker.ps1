@@ -1,5 +1,5 @@
 # Define variables for convenience
-$ImageName = "mtinvimage"
+$ImageName = "mtinv_image"
 $LocalDir = "C:\Users\rober\Projects\mtinv_image_data"
 $ContainerDir = "/home/mtinv-user"
 $DisplayHost = "host.docker.internal:0.0"
