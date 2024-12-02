@@ -110,11 +110,11 @@ ENV MTINV_PATH=${DEV_DIR}/${MTINV}
 
 # --------------------------------------------------------------------------- 80
 # Build CPS
-ENV CPS_VERSION="NP330.Oct-17-2024"
+ENV CPS_VERSION="NP330.Nov-30-2024"
 USER ${MTINV_USER}
 WORKDIR ${DEV_DIR}
-# RUN wget --no-check-certificate https://www.eas.slu.edu/eqc/eqc_cps/Download/NP330.Oct-26-2023.tgz \
-#         && gunzip -c NP330.Oct-26-2023.tgz | tar xf - \
+# RUN wget --no-check-certificate https://www.eas.slu.edu/eqc/eqc_cps/Download/NP330.Nov-30-2024.tgz \
+#         && gunzip -c NP330.Nov-30-2024.tgz | tar xf - \
 #         && cd PROGRAMS.330 \
 #         && ./Setup LINUX6440 \
 #         && ./C
